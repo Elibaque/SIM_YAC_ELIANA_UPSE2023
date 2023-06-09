@@ -1,0 +1,230 @@
+{
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "metadata": {
+    "colab": {
+      "provenance": [],
+      "authorship_tag": "ABX9TyNBjlw4NYisygoNC2seHvTm",
+      "include_colab_link": true
+    },
+    "kernelspec": {
+      "name": "python3",
+      "display_name": "Python 3"
+    },
+    "language_info": {
+      "name": "python"
+    }
+  },
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/Elibaque/SIM_YAC_ELIANA_UPSE2023/blob/main/Ecuacion_de_la_difusividad\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "import numpy as np\n",
+        "# Datos\n",
+        "P = 4000\n",
+        "tiempo_maximo = 200\n",
+        "distancia_total = 1000\n",
+        "N = 6\n",
+        "delta_t = 10"
+      ],
+      "metadata": {
+        "id": "1abNjCgONlAE"
+      },
+      "execution_count": 39,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# Parámetros de espaciado y tiempo\n",
+        "dx = distancia_total / (N - 1)\n",
+        "dt = delta_t"
+      ],
+      "metadata": {
+        "id": "AyPXEhwbOA_s"
+      },
+      "execution_count": 40,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# Cálculo del número de iteraciones\n",
+        "num_iteraciones = int(tiempo_maximo / delta_t)\n",
+        "\n",
+        "# Crear matrices para almacenar los valores de P\n",
+        "P_a = np.zeros(N)\n",
+        "P_s = np.zeros(N)"
+      ],
+      "metadata": {
+        "id": "reZXsaosTCHU"
+      },
+      "execution_count": 41,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# Establecer condiciones iniciales\n",
+        "P_a[0] = 0  # Condición de frontera izquierda\n",
+        "P_a[N - 1] = 0  # Condición de frontera derecha\n",
+        "P_a[1:N - 1] = P  # Condición inicial en el interior"
+      ],
+      "metadata": {
+        "id": "A_74-T9qTRZN"
+      },
+      "execution_count": 42,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# Lista para almacenar los valores de P en cada paso de tiempo\n",
+        "presiones = [np.copy(P_a)]\n",
+        "# Iterar en el tiempo\n",
+        "for _ in range(num_iteraciones):\n",
+        "    for i in range(1, N - 1):\n",
+        "        P_s[i] = ((P_a[i - 1] - 2 * P_a[i] + P_a[i + 1]) / (dx ** 2)) * dt + P_a[i]\n",
+        "\n",
+        "    # Actualizar los valores de P\n",
+        "    P_a = np.copy(P_s)\n",
+        "\n",
+        "    # Almacenar los valores de P en cada paso de tiempo\n",
+        "    presiones.append(np.copy(P_a))\n",
+        "    # Imprimir los resultados\n",
+        "print(\"Presiones con respecto al tiempo:\")\n",
+        "for tiempo, presion in enumerate(presiones):\n",
+        "    print(f\"Tiempo: {tiempo * delta_t}, Presiones: {presion}\")"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "wTAFG8COTWca",
+        "outputId": "d523c936-b2aa-4556-c03e-ec8916ea5a72"
+      },
+      "execution_count": 43,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Presiones con respecto al tiempo:\n",
+            "Tiempo: 0, Presiones: [   0. 4000. 4000. 4000. 4000.    0.]\n",
+            "Tiempo: 10, Presiones: [   0. 3999. 4000. 4000. 3999.    0.]\n",
+            "Tiempo: 20, Presiones: [   0.      3998.0005  3999.99975 3999.99975 3998.0005     0.     ]\n",
+            "Tiempo: 30, Presiones: [   0.         3997.00149969 3999.99925019 3999.99925019 3997.00149969\n",
+            "    0.        ]\n",
+            "Tiempo: 40, Presiones: [   0.         3996.00299875 3999.99850075 3999.99850075 3996.00299875\n",
+            "    0.        ]\n",
+            "Tiempo: 50, Presiones: [   0.         3995.00499688 3999.99750187 3999.99750187 3995.00499688\n",
+            "    0.        ]\n",
+            "Tiempo: 60, Presiones: [   0.         3994.00749375 3999.99625375 3999.99625375 3994.00749375\n",
+            "    0.        ]\n",
+            "Tiempo: 70, Presiones: [   0.         3993.01048907 3999.99475656 3999.99475656 3993.01048907\n",
+            "    0.        ]\n",
+            "Tiempo: 80, Presiones: [   0.         3992.01398251 3999.99301049 3999.99301049 3992.01398251\n",
+            "    0.        ]\n",
+            "Tiempo: 90, Presiones: [   0.         3991.01797378 3999.99101573 3999.99101573 3991.01797378\n",
+            "    0.        ]\n",
+            "Tiempo: 100, Presiones: [   0.         3990.02246254 3999.98877247 3999.98877247 3990.02246254\n",
+            "    0.        ]\n",
+            "Tiempo: 110, Presiones: [   0.        3989.0274485 3999.9862809 3999.9862809 3989.0274485\n",
+            "    0.       ]\n",
+            "Tiempo: 120, Presiones: [   0.         3988.03293135 3999.98354119 3999.98354119 3988.03293135\n",
+            "    0.        ]\n",
+            "Tiempo: 130, Presiones: [   0.         3987.03891077 3999.98055354 3999.98055354 3987.03891077\n",
+            "    0.        ]\n",
+            "Tiempo: 140, Presiones: [   0.         3986.04538645 3999.97731813 3999.97731813 3986.04538645\n",
+            "    0.        ]\n",
+            "Tiempo: 150, Presiones: [   0.         3985.05235809 3999.97383514 3999.97383514 3985.05235809\n",
+            "    0.        ]\n",
+            "Tiempo: 160, Presiones: [   0.         3984.05982537 3999.97010477 3999.97010477 3984.05982537\n",
+            "    0.        ]\n",
+            "Tiempo: 170, Presiones: [   0.         3983.06778798 3999.9661272  3999.9661272  3983.06778798\n",
+            "    0.        ]\n",
+            "Tiempo: 180, Presiones: [   0.         3982.07624562 3999.96190262 3999.96190262 3982.07624562\n",
+            "    0.        ]\n",
+            "Tiempo: 190, Presiones: [   0.         3981.08519797 3999.9574312  3999.9574312  3981.08519797\n",
+            "    0.        ]\n",
+            "Tiempo: 200, Presiones: [   0.         3980.09464473 3999.95271315 3999.95271315 3980.09464473\n",
+            "    0.        ]\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "sDhwbTnXTg14",
+        "outputId": "1d2116e8-92e7-41f4-8830-1d26b47a21f2"
+      },
+      "execution_count": 37,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Presiones con respecto al tiempo:\n",
+            "Tiempo: 0, Presiones: [   0.         3980.09464473 3999.95271315 3999.95271315 3980.09464473\n",
+            "    0.        ]\n",
+            "Tiempo: 10, Presiones: [   0.         3979.10458559 3999.94774863 3999.94774863 3979.10458559\n",
+            "    0.        ]\n",
+            "Tiempo: 20, Presiones: [   0.         3978.11502023 3999.94253784 3999.94253784 3978.11502023\n",
+            "    0.        ]\n",
+            "Tiempo: 30, Presiones: [   0.         3977.12594836 3999.93708096 3999.93708096 3977.12594836\n",
+            "    0.        ]\n",
+            "Tiempo: 40, Presiones: [   0.         3976.13736965 3999.93137818 3999.93137818 3976.13736965\n",
+            "    0.        ]\n",
+            "Tiempo: 50, Presiones: [   0.         3975.14928381 3999.92542967 3999.92542967 3975.14928381\n",
+            "    0.        ]\n",
+            "Tiempo: 60, Presiones: [   0.         3974.16169053 3999.91923564 3999.91923564 3974.16169053\n",
+            "    0.        ]\n",
+            "Tiempo: 70, Presiones: [   0.         3973.17458949 3999.91279625 3999.91279625 3973.17458949\n",
+            "    0.        ]\n",
+            "Tiempo: 80, Presiones: [   0.        3972.1879804 3999.9061117 3999.9061117 3972.1879804\n",
+            "    0.       ]\n",
+            "Tiempo: 90, Presiones: [   0.         3971.20186293 3999.89918217 3999.89918217 3971.20186293\n",
+            "    0.        ]\n",
+            "Tiempo: 100, Presiones: [   0.         3970.2162368  3999.89200784 3999.89200784 3970.2162368\n",
+            "    0.        ]\n",
+            "Tiempo: 110, Presiones: [   0.         3969.23110168 3999.88458889 3999.88458889 3969.23110168\n",
+            "    0.        ]\n",
+            "Tiempo: 120, Presiones: [   0.         3968.24645728 3999.87692552 3999.87692552 3968.24645728\n",
+            "    0.        ]\n",
+            "Tiempo: 130, Presiones: [   0.         3967.26230328 3999.8690179  3999.8690179  3967.26230328\n",
+            "    0.        ]\n",
+            "Tiempo: 140, Presiones: [   0.         3966.27863938 3999.86086623 3999.86086623 3966.27863938\n",
+            "    0.        ]\n",
+            "Tiempo: 150, Presiones: [   0.         3965.29546528 3999.85247067 3999.85247067 3965.29546528\n",
+            "    0.        ]\n",
+            "Tiempo: 160, Presiones: [   0.         3964.31278067 3999.84383142 3999.84383142 3964.31278067\n",
+            "    0.        ]\n",
+            "Tiempo: 170, Presiones: [   0.         3963.33058523 3999.83494866 3999.83494866 3963.33058523\n",
+            "    0.        ]\n",
+            "Tiempo: 180, Presiones: [   0.         3962.34887868 3999.82582256 3999.82582256 3962.34887868\n",
+            "    0.        ]\n",
+            "Tiempo: 190, Presiones: [   0.         3961.36766069 3999.81645333 3999.81645333 3961.36766069\n",
+            "    0.        ]\n",
+            "Tiempo: 200, Presiones: [   0.         3960.38693098 3999.80684113 3999.80684113 3960.38693098\n",
+            "    0.        ]\n"
+          ]
+        }
+      ]
+    }
+  ]
+}
